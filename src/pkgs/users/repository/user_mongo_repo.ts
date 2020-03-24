@@ -52,7 +52,6 @@ export default class MongoUserRepo implements UserRepo {
             console.log(error);
             throw Error("sign in failed");
         }
-        
     }
 
     // gets user by id
