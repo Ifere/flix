@@ -96,9 +96,9 @@ export default class MongoUserRepo implements UserRepo {
     public async fetchUsers(filters: any): Promise<User[] | null> {
         try {
             const users = await UserModel.find(filters);
-            // for (const u of users) {
-            //         u.password = undefined
-            // }
+            for (const u of users) {
+                    u.password = undefined
+            }
             return users
         } catch (error) {
             console.log(error);
