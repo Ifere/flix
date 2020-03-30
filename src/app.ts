@@ -21,5 +21,5 @@ const UserUseCaseInit = new UserUseCase(UserRepoInit);
 app.use("/v1", UserDelivery(UserUseCaseInit));
 
 app.listen(
-    // process.env.PORT ||
+    process.env.PORT ||
     8088, () => console.log("server running...."));
