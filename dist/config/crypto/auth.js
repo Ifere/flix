@@ -78,7 +78,6 @@ class AuthStrategy {
 function AuthMiddleware(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         const header = req.headers;
-        console.log(req.headers);
         console.log(req.params);
         if (header && header.authorization) {
             try {
@@ -90,6 +89,7 @@ function AuthMiddleware(req, res, next) {
                 user = yield checker.getUserById(Verify.user_id);
                 console.log(req.route);
                 if (user && req.params.userID && Verify.user_id === req.params.userID) {
+                    // TODO: work on authentication
                     next();
                 }
                 else if (user) {

@@ -20,7 +20,6 @@ const UserRepoInit = new user_mongo_repo_1.default();
 const UserUseCaseInit = new user_usecase_1.default(UserRepoInit);
 // mount controller
 app.use("/v1", routers_1.default(UserUseCaseInit));
-app.listen(
-// process.env.PORT ||
-8088, () => console.log("server running...."));
+app.listen(process.env.PORT ||
+    8088, () => console.log("server running...."));
 //# sourceMappingURL=app.js.map
