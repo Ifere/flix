@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
-const url = "mongodb://localhost:27017/flix";
+const local = "mongodb://localhost:27017/flix";
+const url = "mongodb+srv://ifere:<haaland2020>@cluster0-mvvga.mongodb.net/test?retryWrites=true&w=majority"
 export const connectMongodb = () => {
     mongoose.connect(
-        url, {
+        url ||local, {
         useNewUrlParser: true,
         useCreateIndex: true,
         useFindAndModify: false,
