@@ -53,12 +53,10 @@ const UserSchema = new Schema({
 
     watched: {
         type: [String],
-        unique: true,
 
     },
     toWatch: {
         type: [String],
-        unique: true,
     },
 
 })
@@ -69,7 +67,7 @@ export interface User extends Document {
     userID: string,
     userName: string;
     email: string;
-    password: string;
+    password: string | undefined;
     igHandle: string;
     avatar: string;
     friends: string[];
@@ -80,10 +78,16 @@ export interface User extends Document {
 
 }
 
-export interface AuthUserSchema {
+export interface AuthUser {
+    userName?: User["userName"];
+    email?: User["email"];
+    password: User["password"];
+
+}
+
+export interface VerifyUser {
     userName: User["userName"];
     email: User["email"];
-    password: User["password"];
 
 }
 

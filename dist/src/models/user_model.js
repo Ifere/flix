@@ -48,11 +48,9 @@ const UserSchema = new mongoose_1.Schema({
     },
     watched: {
         type: [String],
-        unique: true,
     },
     toWatch: {
         type: [String],
-        unique: true,
     },
 });
 // // Virtuals

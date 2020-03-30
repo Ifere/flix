@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const mongo_1 = require("../config/db/mongo");
 const cors_1 = __importDefault(require("cors"));
-const routes_1 = __importDefault(require("./pkgs/users/delivery/routes"));
+const routers_1 = __importDefault(require("./pkgs/users/delivery/http/routers"));
 const user_mongo_repo_1 = __importDefault(require("./pkgs/users/repository/user_mongo_repo"));
 const user_usecase_1 = __importDefault(require("./pkgs/users/usecase/user_usecase"));
 const app = express_1.default();
@@ -19,7 +19,7 @@ mongo_1.connectMongodb();
 const UserRepoInit = new user_mongo_repo_1.default();
 const UserUseCaseInit = new user_usecase_1.default(UserRepoInit);
 // mount controller
-app.use("/v1", routes_1.default(UserUseCaseInit));
+app.use("/v1", routers_1.default(UserUseCaseInit));
 app.listen(
 // process.env.PORT ||
 8088, () => console.log("server running...."));

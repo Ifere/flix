@@ -1,7 +1,7 @@
 import express from "express";
 import { connectMongodb } from "../config/db/mongo";
 import cors from "cors";
-import UserDelivery from "./pkgs/users/delivery/routes";
+import UserDelivery from "./pkgs/users/delivery/http/routers";
 import UserRepo from "./pkgs/users/repository/user_mongo_repo";
 import UserUseCase from "./pkgs/users/usecase/user_usecase";
 

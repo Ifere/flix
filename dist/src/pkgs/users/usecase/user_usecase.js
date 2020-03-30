@@ -34,6 +34,17 @@ class Usecase {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const data = yield this.repo.authUser(user);
+                return data;
+            }
+            catch (error) {
+                return null;
+            }
+        });
+    }
+    getUserById(userID) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const data = yield this.repo.getUserById(userID);
                 return {
                     success: true,
                     data,
@@ -47,20 +58,15 @@ class Usecase {
             }
         });
     }
-    getUser(userID) {
+    verifyUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const data = yield this.repo.getUser(userID);
-                return {
-                    success: true,
-                    data,
-                };
+                const data = yield this.repo.verifyUser(user);
+                return data;
             }
             catch (error) {
-                return {
-                    success: false,
-                    error,
-                };
+                console.log(error);
+                return false;
             }
         });
     }

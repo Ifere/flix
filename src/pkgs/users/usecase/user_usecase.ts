@@ -1,13 +1,14 @@
 import Response from "../../../../config/responses";
-import { User, AuthUserSchema } from "../../../models/user_model";
+import { User, AuthUser } from "../../../models/user_model";
 import { UserRepo } from "../repository/user_mongo_repo"
 
 
 
 export interface UsecaseI {
-    createUser(user: AuthUserSchema): Promise<Response>;
-    authenticateUser(auth: AuthUserSchema): Promise<Response>;
-    getUser(userID: string): Promise<Response>;
+    createUser(user: AuthUser): Promise<Response>;
+    authenticateUser(auth: AuthUser): Promise<any>;
+    getUserById(userID: string): Promise<Response>;
+    verifyUser(user: AuthUser): Promise<boolean>;
     fetchUsers(filter: any): Promise<Response>;
     updateUser(userID: string, updates: any): Promise<Response>;
     deleteUser(userID: string): Promise<Response>;
@@ -22,7 +23,7 @@ export default class Usecase implements UsecaseI {
     constructor(repo: UserRepo) {
         this.repo = repo;
     }
-    public async createUser(user: AuthUserSchema): Promise<Response> {
+    public async createUser(user: AuthUser): Promise<Response> {
         try {
             const data = await this.repo.createUser(user);
             return {
@@ -37,24 +38,18 @@ export default class Usecase implements UsecaseI {
         }
     }
 
-    public async authenticateUser(user: AuthUserSchema): Promise<Response> {
+    public async authenticateUser(user: AuthUser): Promise<string | null> {
         try {
             const data = await this.repo.authUser(user);
-            return {
-                success: true,
-                data,
-            };
+            return data
         } catch (error) {
-            return {
-                success: false,
-                error,
-            }
+            return null
         }
     }
 
-    public async getUser(userID: string): Promise<Response> {
+    public async getUserById(userID: string): Promise<Response> {
         try {
-            const data = await this.repo.getUser(userID);
+            const data = await this.repo.getUserById(userID);
             return {
                 success: true,
                 data,
@@ -64,6 +59,16 @@ export default class Usecase implements UsecaseI {
                 success: false,
                 error,
             };
+        }
+    }
+
+    public async verifyUser(user: AuthUser): Promise<boolean> {
+        try {
+            const data = await this.repo.verifyUser(user);
+            return data
+        } catch (error) {
+            console.log(error)
+            return false
         }
     }
 

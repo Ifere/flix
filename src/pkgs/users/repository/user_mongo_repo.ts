@@ -1,13 +1,15 @@
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
-import UserModel, { User, AuthUserSchema } from "../../../models/user_model";
+import UserModel, { User, AuthUser, VerifyUser } from "../../../models/user_model";
+import user_model from "../../../models/user_model";
 
 // implements the user repo interface
 // implements the user repo interface using mongodb mongoose
 export interface UserRepo {
-    createUser(user: AuthUserSchema): Promise<User | null>;
-    authUser(userAuth: AuthUserSchema): Promise<User | null>;
-    getUser(userID: string): Promise<User | null>;
+    createUser(user: AuthUser): Promise<User | null>;
+    authUser(userAuth: AuthUser): Promise<string | null>;
+    getUserById(userID: string): Promise<User | null>;
+    verifyUser(user: AuthUser): Promise<boolean>;
     fetchUsers(filters: any): Promise<User[] | null>;
     updateUser(userID: string, updates: any): Promise<User | null>;
     deleteUser(userID: string): Promise<any>;
@@ -18,9 +20,10 @@ export interface UserRepo {
 export default class MongoUserRepo implements UserRepo {
 
     // creates new user
-    public async createUser(user: AuthUserSchema): Promise<User | null> {
+    public async createUser(user: AuthUser): Promise<User | null> {
         try {
             const data = await UserModel.create(user);
+            data.password = undefined
             console.log(data)
             return data;
 
@@ -31,11 +34,9 @@ export default class MongoUserRepo implements UserRepo {
 
     }
 
-    public async authUser(userAuth: AuthUserSchema): Promise<User | null> {
+    public async authUser(userAuth: AuthUser): Promise<string | null> {
         try {
-            console.log(userAuth);
             let data;
-
             if (userAuth.userName) {
                 data = await UserModel.findOne({ "userName": userAuth.userName });
             }
@@ -43,9 +44,8 @@ export default class MongoUserRepo implements UserRepo {
                 data = await UserModel.findOne({ "email": userAuth.email });
             }
 
-            if (data && await bcrypt.compare(userAuth.password, data.password)) {
-                console.log(data)
-                return data
+            if (data && data.password && await bcrypt.compare(userAuth.password, data.password)) {
+                return data._id
             }
             return null
         } catch (error) {
@@ -55,15 +55,39 @@ export default class MongoUserRepo implements UserRepo {
     }
 
     // gets user by id
-    public async getUser(userID: string): Promise<User | null> {
+
+    public async getUserById(userID: string): Promise<User | null> {
         try {
             const data = await UserModel.findById(userID)
+            if (data) data.password = undefined
             return data;
 
         } catch (error) {
             console.log(error);
-            throw Error("user not found");
+            return null
 
+        }
+    }
+
+    // get user by email or username
+
+    public async verifyUser(user: AuthUser): Promise<boolean> {
+        try {
+            let data;
+            if (user.userName) {
+                data = await UserModel.findOne({ "userName": user.userName });
+            }
+            else if (user.email) {
+                data = await UserModel.findOne({ "email": user.email });
+            }
+            if (data) {
+                return true
+            } else {
+                return false
+            }
+        } catch (error) {
+            console.log(error)
+            return false
         }
     }
 
@@ -72,6 +96,9 @@ export default class MongoUserRepo implements UserRepo {
     public async fetchUsers(filters: any): Promise<User[] | null> {
         try {
             const users = await UserModel.find(filters);
+            // for (const u of users) {
+            //         u.password = undefined
+            // }
             return users
         } catch (error) {
             console.log(error);
@@ -83,7 +110,9 @@ export default class MongoUserRepo implements UserRepo {
     // updates user details
     public async updateUser(userID: string, updates: any): Promise<User | null> {
         try {
-            return await UserModel.findByIdAndUpdate(userID, { $set: updates }, { new: true });
+            const user = await UserModel.findByIdAndUpdate(userID, { $set: updates }, { new: true });
+            if (user) user.password = undefined
+            return user
         } catch (error) {
             console.log(error);
             throw Error("user not updated");

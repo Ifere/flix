@@ -4,3 +4,8 @@ export default interface GeneralResponse {
     message?: string;
     data?: any;
 }
+
+export interface TokenData {
+    Token: string,
+    ExpiresIn: number,
+}

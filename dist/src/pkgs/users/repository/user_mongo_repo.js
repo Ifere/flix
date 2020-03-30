@@ -20,6 +20,7 @@ class MongoUserRepo {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const data = yield user_model_1.default.create(user);
+                data.password = undefined;
                 console.log(data);
                 return data;
             }
@@ -32,7 +33,6 @@ class MongoUserRepo {
     authUser(userAuth) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log(userAuth);
                 let data;
                 if (userAuth.userName) {
                     data = yield user_model_1.default.findOne({ "userName": userAuth.userName });
@@ -40,9 +40,8 @@ class MongoUserRepo {
                 else if (userAuth.email) {
                     data = yield user_model_1.default.findOne({ "email": userAuth.email });
                 }
-                if (data && (yield bcrypt_1.default.compare(userAuth.password, data.password))) {
-                    console.log(data);
-                    return data;
+                if (data && data.password && (yield bcrypt_1.default.compare(userAuth.password, data.password))) {
+                    return data._id;
                 }
                 return null;
             }
@@ -53,15 +52,41 @@ class MongoUserRepo {
         });
     }
     // gets user by id
-    getUser(userID) {
+    getUserById(userID) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const data = yield user_model_1.default.findById(userID);
+                if (data)
+                    data.password = undefined;
                 return data;
             }
             catch (error) {
                 console.log(error);
-                throw Error("user not found");
+                return null;
+            }
+        });
+    }
+    // get user by email or username
+    verifyUser(user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let data;
+                if (user.userName) {
+                    data = yield user_model_1.default.findOne({ "userName": user.userName });
+                }
+                else if (user.email) {
+                    data = yield user_model_1.default.findOne({ "email": user.email });
+                }
+                if (data) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            catch (error) {
+                console.log(error);
+                return false;
             }
         });
     }
@@ -70,6 +95,9 @@ class MongoUserRepo {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const users = yield user_model_1.default.find(filters);
+                // for (const u of users) {
+                //         u.password = undefined
+                // }
                 return users;
             }
             catch (error) {
@@ -82,7 +110,10 @@ class MongoUserRepo {
     updateUser(userID, updates) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield user_model_1.default.findByIdAndUpdate(userID, { $set: updates }, { new: true });
+                const user = yield user_model_1.default.findByIdAndUpdate(userID, { $set: updates }, { new: true });
+                if (user)
+                    user.password = undefined;
+                return user;
             }
             catch (error) {
                 console.log(error);
