@@ -22,7 +22,7 @@ const signOptions: jwt.SignOptions = {
 interface TokenData {
     token: string;
     expiresIn: number;
-    // userID: Types.ObjectId;
+    userID: string;
 }
 export interface TokenUserId {
     user_id: string
@@ -121,6 +121,7 @@ export function SignToken(toEncrypt: TokenUserId, options: jwt.SignOptions = sig
 
     const Token: TokenData = { token: jwt.sign(toEncrypt,'a2e0bf066dbdbe113b1ced372f5aa7c27d2547d3f2df3e7ea70d4aa1d120fd14380864eb8e9399a89e7d4ce0ed424f68ce8c9e6a2b7571441afccc4325449104'),
                                 expiresIn: 3600,
+                                userID: toEncrypt.user_id
     }
     return Token
 

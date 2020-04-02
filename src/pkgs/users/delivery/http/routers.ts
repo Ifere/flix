@@ -28,4 +28,4 @@ export default function newHttpUserDelivery(usecase: UserUseCase) {
         .delete((req, res) => handler.deleteUser(req, res));
 
     return api;
-}
+};

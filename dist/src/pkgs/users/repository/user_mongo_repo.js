@@ -95,9 +95,9 @@ class MongoUserRepo {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const users = yield user_model_1.default.find(filters);
-                // for (const u of users) {
-                //         u.password = undefined
-                // }
+                for (const u of users) {
+                    u.password = undefined;
+                }
                 return users;
             }
             catch (error) {
